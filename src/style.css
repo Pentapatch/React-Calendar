@@ -1,0 +1,14 @@
+.calendar {
+  width: 80%;
+  /* background-color: red; */
+}
+
+.calendar td {
+  width: 30px;
+  height: 30px;
+  text-align: center;
+}
+
+.calendar-headers {
+  font-weight: bold;
+}
