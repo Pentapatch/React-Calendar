@@ -1,17 +1,37 @@
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  --backgroundColor: rgb(251, 251, 251);
+  --selection-color: rgb(151, 195, 239);
+  --hover-color: rgb(217, 226, 235);
+  --outside-month-color: gray;
+  --foreground-color: rgb(27, 27, 27);
+  --font-family: "Roboto", sans-serif;
+  --cell-size: 35px;
+}
+
 .calendar {
-  width: 80%;
-  /* background-color: red; */
+  font-family: var(--font-family);
+  user-select: none;
+  color: var(--foreground-color);
+}
+
+.calendar table {
+  background-color: var(--backgroundColor);
+  border: 1px solid var(--foreground-color);
+  border-radius: 10px;
+  padding: 2px;
 }
 
 .calendar td {
-  width: 30px;
-  height: 30px;
+  width: var(--cell-size);
+  height: var(--cell-size);
   text-align: center;
 }
 
 .calendar-headers,
 .calendar-nav {
   font-weight: bold;
+  vertical-align: middle;
 }
 
 #calendar-month {
@@ -19,13 +39,32 @@
   font-size: large;
 }
 
+.calendar-cell {
+  border-radius: 50%;
+  background-color: var(--backgroundColor);
+  transition: all 0.05s linear;
+}
+
 .calendar-cell-prev,
 .calendar-cell-next {
-  color: gray;
+  color: var(--outside-month-color);
 }
 
 .calendar-cell-selected {
   font-weight: bold;
-  background-color: lightsalmon;
-  border-radius: 50%;
+  background-color: var(--selection-color);
+}
+
+/* Set the cursor for all clickable elements */
+#calendar-prev,
+#calendar-next,
+.calendar-cell {
+  cursor: pointer;
+}
+
+/* Highlight all clickable cells when hovered */
+.calendar-cell:hover:not(.calendar-cell-selected) {
+  background-color: var(--hover-color);
+  font-weight: bold;
+  color: var(--foreground-color);
 }

@@ -65,8 +65,12 @@ function Navigation(props) {
       <td id="calendar-month" colSpan={5}>
         {monthNames[props.date.getMonth()] + " " + props.date.getFullYear()}
       </td>
-      <td id="calendar-prev">{"<"}</td>
-      <td id="calendar-next">{">"}</td>
+      <td id="calendar-prev">
+        <span class="material-symbols-outlined">chevron_left</span>
+      </td>
+      <td id="calendar-next">
+        <span class="material-symbols-outlined">chevron_right</span>
+      </td>
     </tr>
   );
 }
@@ -129,6 +133,7 @@ function createCell(
     <td
       id={`calendar-cell-${rowLetters[rowIndex]}${index}`}
       className={classNames({
+        "calendar-cell": true,
         "calendar-cell-prev": prevMonth,
         "calendar-cell-next": nextMonth,
         "calendar-cell-selected": selected,
@@ -138,47 +143,6 @@ function createCell(
     </td>
   );
 }
-
-// function GetCell(date, rowIndex, index) {
-//   // Get the day of week for the 1st day in the selected month
-//   let firstDay = new Date(date);
-//   firstDay.setDate(1);
-//   firstDay = firstDay.getDay() - 1;
-//   if (firstDay === -1) firstDay = 6; // Make sunday be the last day of the week
-
-//   // Is the cell part of the previous month?
-//   if (rowIndex === 0 && index <= firstDay) {
-//     // Get the length of the previous month
-//     let prevMonthDays = new Date(
-//       date.getFullYear(),
-//       date.getMonth(),
-//       0
-//     ).getDate();
-
-//     return prevMonthDays - (firstDay - index);
-//   }
-
-//   // Get the last date of the selected month
-//   let lastDate = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-//   console.log(lastDate);
-
-//   let cellDate = rowIndex * 7 + index - firstDay;
-
-//   if (cellDate > lastDate) cellDate -= lastDate;
-
-//   return cellDate;
-
-//   // Return the date for the cell att position rowIndex:index
-//   // return GetOffset(rowIndex, index, firstDay, lastDate);
-// }
-
-// function GetOffset(rowIndex, index, firstDay, lastDate) {
-//   let result = rowIndex * 7 + index - firstDay;
-
-//   if (result > lastDate) result -= lastDate;
-
-//   return result;
-// }
 
 function Calendar(props) {
   let date = props.date;
@@ -199,7 +163,6 @@ function Calendar(props) {
           <Row rowIndex={5} date={props.date} />
         </tbody>
       </table>
-      <p>{date.toLocaleDateString()}</p>
     </div>
   );
 }

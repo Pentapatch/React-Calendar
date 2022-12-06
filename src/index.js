@@ -14,8 +14,12 @@ function Tester() {
 
   return (
     <div>
-      <h1>Calendar in progress</h1>
+      <h1>React Calendar</h1>
       <Calendar date={selectedMonth} />
+      <br />
+      <small>
+        By <strong>Dennis Hankvist</strong> december 2022
+      </small>
     </div>
   );
 }
