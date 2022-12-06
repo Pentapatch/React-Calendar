@@ -58,6 +58,7 @@
 /* Set the cursor for all clickable elements */
 #calendar-prev,
 #calendar-next,
+#calendar-reset,
 .calendar-cell {
   cursor: pointer;
 }

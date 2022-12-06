@@ -1,11 +1,8 @@
 import classNames from "classnames";
-import BookingManager from "./BookingManager";
 import "./style.css";
+import { useRef, useState } from "react";
 
-let mgr = new BookingManager();
-
-mgr.populate();
-
+// Configuration
 let rowLetters = ["a", "b", "c", "d", "e", "f"];
 let dayNames = ["må", "ti", "on", "to", "fr", "lö", "sö"];
 let monthNames = [
@@ -62,20 +59,24 @@ function Header(props) {
 function Navigation(props) {
   return (
     <tr className="calendar-nav">
-      <td id="calendar-month" colSpan={5}>
+      <td id="calendar-month" colSpan={4}>
         {monthNames[props.date.getMonth()] + " " + props.date.getFullYear()}
       </td>
-      <td id="calendar-prev">
-        <span class="material-symbols-outlined">chevron_left</span>
+      <td id="calendar-reset" onClick={props.onResetClick}>
+        <span class="material-symbols-outlined">restart_alt</span>
       </td>
-      <td id="calendar-next">
-        <span class="material-symbols-outlined">chevron_right</span>
+      <td id="calendar-prev" onClick={props.onPrevClick}>
+        <span className="material-symbols-outlined">chevron_left</span>
+      </td>
+      <td id="calendar-next" onClick={props.onNextClick}>
+        <span className="material-symbols-outlined">chevron_right</span>
       </td>
     </tr>
   );
 }
 
 function Cell(props) {
+  // Create variables from the properties for convenience sake
   let date = props.date;
   let rowIndex = props.rowIndex;
   let index = props.index;
@@ -83,9 +84,10 @@ function Cell(props) {
   // Get the day of week for the 1st day in the selected month
   let firstDay = new Date(date);
   firstDay.setDate(1);
-  firstDay = firstDay.getDay() - 1;
-  if (firstDay === -1) firstDay = 6; // Make sunday be the last day of the week
+  firstDay = firstDay.getDay() - 1; // Make sunday the last day of the week
+  if (firstDay === -1) firstDay = 6; // Make sunday the last day of the week
 
+  // Calculate the date of the cell
   let cellDate = rowIndex * 7 + index - firstDay;
 
   // Is the cell part of the previous month?
@@ -97,8 +99,16 @@ function Cell(props) {
       0
     ).getDate();
 
+    // Offset the date
     cellDate = prevMonthDays - (firstDay - index);
-    return createCell(rowIndex, index, cellDate, true, null);
+
+    // Create a date object that represents this cell
+    let value = new Date(date);
+    value.setDate(cellDate);
+    value.setMonth(date.getMonth() - 1);
+
+    // Return the cell
+    return createCell(rowIndex, index, cellDate, value, true, null);
   }
 
   // Get the last date of the selected month
@@ -106,15 +116,30 @@ function Cell(props) {
 
   // Is the cell part of the next month?
   if (cellDate > lastDate) {
+    // Offset the date
     cellDate -= lastDate;
-    return createCell(rowIndex, index, cellDate, null, true);
+
+    // Create a date object that represents this cell
+    let value = new Date(date);
+    value.setDate(cellDate);
+    value.setMonth(date.getMonth() + 1);
+
+    // Return the cell
+    return createCell(rowIndex, index, cellDate, value, null, true);
   }
 
   // Cell is part of the current month
+
+  // Create a date object that represents this cell
+  let value = new Date(date);
+  value.setDate(cellDate);
+
+  // Return the cell
   return createCell(
     rowIndex,
     index,
     cellDate,
+    value,
     null,
     null,
     cellDate === date.getDate()
@@ -125,6 +150,7 @@ function createCell(
   rowIndex,
   index,
   cellDate,
+  date,
   prevMonth,
   nextMonth,
   selected = null
@@ -132,6 +158,7 @@ function createCell(
   return (
     <td
       id={`calendar-cell-${rowLetters[rowIndex]}${index}`}
+      value={date}
       className={classNames({
         "calendar-cell": true,
         "calendar-cell-prev": prevMonth,
@@ -145,50 +172,53 @@ function createCell(
 }
 
 function Calendar(props) {
-  let date = props.date;
+  let [date, setDate] = useState(props.date);
+
+  function handleNextClick() {
+    let newDate = new Date(date);
+    newDate.setMonth(newDate.getMonth() + 1);
+    setDate(newDate);
+  }
+
+  function handlePrevClick() {
+    let newDate = new Date(date);
+    newDate.setMonth(newDate.getMonth() - 1);
+    setDate(newDate);
+  }
+
+  function handleResetClick() {
+    setDate(new Date());
+  }
+
+  function handleCellClick(e) {
+    let newDate = new Date(date);
+    newDate.setDate(0); // <-- 0 to be replaced by the value of the cell
+    setDate(newDate);
+  }
 
   return (
     <div className="calendar">
       <table>
         <thead>
-          <Navigation date={date} />
+          <Navigation
+            date={date}
+            onPrevClick={handlePrevClick}
+            onNextClick={handleNextClick}
+            onResetClick={handleResetClick}
+          />
           <Headers />
         </thead>
         <tbody>
-          <Row rowIndex={0} date={props.date} />
-          <Row rowIndex={1} date={props.date} />
-          <Row rowIndex={2} date={props.date} />
-          <Row rowIndex={3} date={props.date} />
-          <Row rowIndex={4} date={props.date} />
-          <Row rowIndex={5} date={props.date} />
+          <Row rowIndex={0} date={date} />
+          <Row rowIndex={1} date={date} />
+          <Row rowIndex={2} date={date} />
+          <Row rowIndex={3} date={date} />
+          <Row rowIndex={4} date={date} />
+          <Row rowIndex={5} date={date} />
         </tbody>
       </table>
     </div>
   );
 }
-
-// function AddBookedDays() {
-//   let result = [];
-//   mgr.getDays().forEach((booking) => {
-//     result.push(AddBookedDay(booking));
-//   });
-//   return result;
-// }
-
-// function AddBookedDay(booking) {
-//   return <p>{booking.getDate().toLocaleDateString()}</p>;
-// }
-
-// function AddBookedSessions(day) {
-//   let result = [];
-//   booking.getDays().forEach((session) => {
-//     result.push(AddBookedSession(booking));
-//   });
-//   return result;
-// }
-
-// function AddBookedSession(session) {
-//   return <p>{session.getDate().toLocaleDateString()}</p>;
-// }
 
 export default Calendar;

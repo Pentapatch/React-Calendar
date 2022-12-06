@@ -3,19 +3,13 @@ import ReactDOM from "react-dom/client";
 import Calendar from "./Calendar";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<Tester />);
+root.render(<App />);
 
-// <script type="text/babel">
-// Babel används för att omvandla script så det stöds i äldre webläsare
-
-function Tester() {
-  let selectedMonth = new Date();
-  selectedMonth.setMonth(11);
-
+function App() {
   return (
     <div>
       <h1>React Calendar</h1>
-      <Calendar date={selectedMonth} />
+      <Calendar date={new Date()} />
       <br />
       <small>
         By <strong>Dennis Hankvist</strong> december 2022
