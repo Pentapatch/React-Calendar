@@ -23,13 +23,48 @@ let monthNames = [
 function Row(props) {
   return (
     <tr id={`calendar-row-${props.rowIndex}`}>
-      <Cell rowIndex={props.rowIndex} index={1} date={props.date} />
-      <Cell rowIndex={props.rowIndex} index={2} date={props.date} />
-      <Cell rowIndex={props.rowIndex} index={3} date={props.date} />
-      <Cell rowIndex={props.rowIndex} index={4} date={props.date} />
-      <Cell rowIndex={props.rowIndex} index={5} date={props.date} />
-      <Cell rowIndex={props.rowIndex} index={6} date={props.date} />
-      <Cell rowIndex={props.rowIndex} index={7} date={props.date} />
+      <Cell
+        rowIndex={props.rowIndex}
+        index={1}
+        date={props.date}
+        onCellClick={props.onCellClick}
+      />
+      <Cell
+        rowIndex={props.rowIndex}
+        index={2}
+        date={props.date}
+        onCellClick={props.onCellClick}
+      />
+      <Cell
+        rowIndex={props.rowIndex}
+        index={3}
+        date={props.date}
+        onCellClick={props.onCellClick}
+      />
+      <Cell
+        rowIndex={props.rowIndex}
+        index={4}
+        date={props.date}
+        onCellClick={props.onCellClick}
+      />
+      <Cell
+        rowIndex={props.rowIndex}
+        index={5}
+        date={props.date}
+        onCellClick={props.onCellClick}
+      />
+      <Cell
+        rowIndex={props.rowIndex}
+        index={6}
+        date={props.date}
+        onCellClick={props.onCellClick}
+      />
+      <Cell
+        rowIndex={props.rowIndex}
+        index={7}
+        date={props.date}
+        onCellClick={props.onCellClick}
+      />
     </tr>
   );
 }
@@ -63,7 +98,7 @@ function Navigation(props) {
         {monthNames[props.date.getMonth()] + " " + props.date.getFullYear()}
       </td>
       <td id="calendar-reset" onClick={props.onResetClick}>
-        <span class="material-symbols-outlined">restart_alt</span>
+        <span className="material-symbols-outlined">restart_alt</span>
       </td>
       <td id="calendar-prev" onClick={props.onPrevClick}>
         <span className="material-symbols-outlined">chevron_left</span>
@@ -104,11 +139,20 @@ function Cell(props) {
 
     // Create a date object that represents this cell
     let value = new Date(date);
-    value.setDate(cellDate);
     value.setMonth(date.getMonth() - 1);
+    value.setDate(cellDate);
 
     // Return the cell
-    return createCell(rowIndex, index, cellDate, value, true, null);
+    return createCell(
+      rowIndex,
+      index,
+      cellDate,
+      value,
+      true,
+      null,
+      null,
+      props.onCellClick
+    );
   }
 
   // Get the last date of the selected month
@@ -121,11 +165,20 @@ function Cell(props) {
 
     // Create a date object that represents this cell
     let value = new Date(date);
-    value.setDate(cellDate);
     value.setMonth(date.getMonth() + 1);
+    value.setDate(cellDate);
 
     // Return the cell
-    return createCell(rowIndex, index, cellDate, value, null, true);
+    return createCell(
+      rowIndex,
+      index,
+      cellDate,
+      value,
+      null,
+      true,
+      null,
+      props.onCellClick
+    );
   }
 
   // Cell is part of the current month
@@ -142,7 +195,8 @@ function Cell(props) {
     value,
     null,
     null,
-    cellDate === date.getDate()
+    cellDate === date.getDate(),
+    props.onCellClick
   );
 }
 
@@ -153,12 +207,14 @@ function createCell(
   date,
   prevMonth,
   nextMonth,
-  selected = null
+  selected = null,
+  onCellClick
 ) {
   return (
     <td
       id={`calendar-cell-${rowLetters[rowIndex]}${index}`}
       value={date}
+      onClick={() => onCellClick(date)}
       className={classNames({
         "calendar-cell": true,
         "calendar-cell-prev": prevMonth,
@@ -190,10 +246,9 @@ function Calendar(props) {
     setDate(new Date());
   }
 
-  function handleCellClick(e) {
-    let newDate = new Date(date);
-    newDate.setDate(0); // <-- 0 to be replaced by the value of the cell
+  function handleCellClick(newDate) {
     setDate(newDate);
+    console.log(newDate);
   }
 
   return (
@@ -209,12 +264,12 @@ function Calendar(props) {
           <Headers />
         </thead>
         <tbody>
-          <Row rowIndex={0} date={date} />
-          <Row rowIndex={1} date={date} />
-          <Row rowIndex={2} date={date} />
-          <Row rowIndex={3} date={date} />
-          <Row rowIndex={4} date={date} />
-          <Row rowIndex={5} date={date} />
+          <Row rowIndex={0} date={date} onCellClick={handleCellClick} />
+          <Row rowIndex={1} date={date} onCellClick={handleCellClick} />
+          <Row rowIndex={2} date={date} onCellClick={handleCellClick} />
+          <Row rowIndex={3} date={date} onCellClick={handleCellClick} />
+          <Row rowIndex={4} date={date} onCellClick={handleCellClick} />
+          <Row rowIndex={5} date={date} onCellClick={handleCellClick} />
         </tbody>
       </table>
     </div>
