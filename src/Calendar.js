@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import BookingManager from "./BookingManager";
 import "./style.css";
 
@@ -36,7 +37,7 @@ function Row(props) {
   );
 }
 
-function Headers(props) {
+function Headers() {
   return (
     <tr className={"calendar-headers"}>
       <Header index={0} />
@@ -58,55 +59,135 @@ function Header(props) {
   );
 }
 
-function Cell(props) {
+function Navigation(props) {
   return (
-    <td id={`calendar-cell-${rowLetters[props.rowIndex]}${props.index}`}>
-      {GetDay(props.date, props.rowIndex, props.index)}
-    </td>
+    <tr className="calendar-nav">
+      <td id="calendar-month" colSpan={5}>
+        {monthNames[props.date.getMonth()] + " " + props.date.getFullYear()}
+      </td>
+      <td id="calendar-prev">{"<"}</td>
+      <td id="calendar-next">{">"}</td>
+    </tr>
   );
 }
 
-function GetDay(date, rowIndex, index) {
+function Cell(props) {
+  let date = props.date;
+  let rowIndex = props.rowIndex;
+  let index = props.index;
+
   // Get the day of week for the 1st day in the selected month
   let firstDay = new Date(date);
   firstDay.setDate(1);
   firstDay = firstDay.getDay() - 1;
   if (firstDay === -1) firstDay = 6; // Make sunday be the last day of the week
 
+  let cellDate = rowIndex * 7 + index - firstDay;
+
+  // Is the cell part of the previous month?
   if (rowIndex === 0 && index <= firstDay) {
-    return 0;
+    // Get the length of the previous month
+    let prevMonthDays = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      0
+    ).getDate();
+
+    cellDate = prevMonthDays - (firstDay - index);
+    return createCell(rowIndex, index, cellDate, true, null);
   }
 
-  // Get the day of wee for the 1st day in the month next to the selected month
-  let firstDayOfNext = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-  let lastDay = firstDayOfNext.getDate();
+  // Get the last date of the selected month
+  let lastDate = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 
-  console.log(firstDayOfNext);
+  // Is the cell part of the next month?
+  if (cellDate > lastDate) {
+    cellDate -= lastDate;
+    return createCell(rowIndex, index, cellDate, null, true);
+  }
 
-  // console.log(index);
-  // console.log(firstDay);
-
-  return GetOffset(rowIndex, index, firstDay, lastDay);
+  // Cell is part of the current month
+  return createCell(
+    rowIndex,
+    index,
+    cellDate,
+    null,
+    null,
+    cellDate === date.getDate()
+  );
 }
 
-function GetOffset(rowIndex, index, firstDay, lastDay) {
-  let result = rowIndex * 7 + index - firstDay;
-
-  if (result > lastDay) result -= lastDay;
-
-  return result;
+function createCell(
+  rowIndex,
+  index,
+  cellDate,
+  prevMonth,
+  nextMonth,
+  selected = null
+) {
+  return (
+    <td
+      id={`calendar-cell-${rowLetters[rowIndex]}${index}`}
+      className={classNames({
+        "calendar-cell-prev": prevMonth,
+        "calendar-cell-next": nextMonth,
+        "calendar-cell-selected": selected,
+      })}
+    >
+      {cellDate}
+    </td>
+  );
 }
+
+// function GetCell(date, rowIndex, index) {
+//   // Get the day of week for the 1st day in the selected month
+//   let firstDay = new Date(date);
+//   firstDay.setDate(1);
+//   firstDay = firstDay.getDay() - 1;
+//   if (firstDay === -1) firstDay = 6; // Make sunday be the last day of the week
+
+//   // Is the cell part of the previous month?
+//   if (rowIndex === 0 && index <= firstDay) {
+//     // Get the length of the previous month
+//     let prevMonthDays = new Date(
+//       date.getFullYear(),
+//       date.getMonth(),
+//       0
+//     ).getDate();
+
+//     return prevMonthDays - (firstDay - index);
+//   }
+
+//   // Get the last date of the selected month
+//   let lastDate = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+//   console.log(lastDate);
+
+//   let cellDate = rowIndex * 7 + index - firstDay;
+
+//   if (cellDate > lastDate) cellDate -= lastDate;
+
+//   return cellDate;
+
+//   // Return the date for the cell att position rowIndex:index
+//   // return GetOffset(rowIndex, index, firstDay, lastDate);
+// }
+
+// function GetOffset(rowIndex, index, firstDay, lastDate) {
+//   let result = rowIndex * 7 + index - firstDay;
+
+//   if (result > lastDate) result -= lastDate;
+
+//   return result;
+// }
 
 function Calendar(props) {
   let date = props.date;
 
   return (
     <div className="calendar">
-      <div className="calendar-month" id="calendar-month">
-        {monthNames[date.getMonth()] + " " + date.getFullYear()}
-      </div>
       <table>
         <thead>
+          <Navigation date={date} />
           <Headers />
         </thead>
         <tbody>

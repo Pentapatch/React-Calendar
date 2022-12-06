@@ -10,7 +10,7 @@ root.render(<Tester />);
 
 function Tester() {
   let selectedMonth = new Date();
-  selectedMonth.setMonth(12);
+  selectedMonth.setMonth(11);
 
   return (
     <div>

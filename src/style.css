@@ -9,6 +9,23 @@
   text-align: center;
 }
 
-.calendar-headers {
+.calendar-headers,
+.calendar-nav {
   font-weight: bold;
+}
+
+#calendar-month {
+  text-align: left;
+  font-size: large;
+}
+
+.calendar-cell-prev,
+.calendar-cell-next {
+  color: gray;
+}
+
+.calendar-cell-selected {
+  font-weight: bold;
+  background-color: lightsalmon;
+  border-radius: 50%;
 }
